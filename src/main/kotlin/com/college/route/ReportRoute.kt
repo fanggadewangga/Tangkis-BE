@@ -10,7 +10,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import java.lang.Exception
+import kotlin.Exception
 
 class ReportRoute(
     private val reportRepository: ReportRepository,
@@ -32,7 +32,7 @@ class ReportRoute(
                     if (!body.isNeedConsultation && body.consultation == null) {
                         reportRepository.insertReport(nim = nim, body = body)
                     } else {
-                        val uid = consultationRepository.insertConsultation(nim = nim ,body = body.consultation!!)
+                        val uid = consultationRepository.insertConsultation(nim = nim, body = body.consultation!!)
                         reportRepository.insertReport(nim = nim, body = body, consultationId = uid)
                     }
                     call.buildSuccessJson { "Sukses mengirim laporan" }
@@ -57,13 +57,28 @@ class ReportRoute(
         }
     }
 
+    private fun Route.getReportDetail() {
+        authenticate {
+            get("/user/{nim}/report/{reportId}") {
+                val uid = call.parameters["nim"] ?: ""
+                val reportId = call.parameters["reportId"] ?: ""
+                try {
+                    val report = reportRepository.getReportDetail(nim = uid, reportId = reportId)
+                    call.buildSuccessJson { report }
+                } catch (e: Exception) {
+                    call.buildErrorJson(e)
+                }
+            }
+        }
+    }
+
     private fun Route.updateReportProgress() {
         authenticate {
             put("/report/{reportId}") {
                 val reportId = call.parameters["reportId"] ?: ""
                 try {
                     reportRepository.updateReportProgress(reportId)
-                    call.buildSuccessJson{ "Sukses mengupdate progress laporan" }
+                    call.buildSuccessJson { "Sukses mengupdate progress laporan" }
                 } catch (e: Exception) {
                     call.buildErrorJson(e)
                 }
@@ -74,6 +89,7 @@ class ReportRoute(
     fun Route.initRoutes() {
         postReport()
         getReport()
+        getReportDetail()
         updateReportProgress()
     }
 }
