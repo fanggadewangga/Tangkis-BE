@@ -6,4 +6,5 @@ import com.college.model.response.consultation.ConsultationResponse
 interface ConsultationRepository {
     suspend fun insertConsultation(nim: String, body: ConsultationRequest): String // clear
     suspend fun getConsultationByNim(nim: String): List<ConsultationResponse> // clear
+    suspend fun getConsultationDetail(nim: String, consultationId: String): ConsultationResponse // clear
 }

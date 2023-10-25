@@ -47,8 +47,24 @@ class ConsultationRoute(
         }
     }
 
+    private fun Route.getConsultationDetail() {
+        authenticate {
+            get("/user/{nim}/consultation/{consultationId}") {
+                val nim = call.parameters["nim"] ?: ""
+                val consultationId = call.parameters["consultationId"] ?: ""
+                try {
+                    val consultationDetail = consultationRepository.getConsultationDetail(nim, consultationId)
+                    call.buildSuccessJson { consultationDetail }
+                } catch (e: Exception) {
+                    call.buildErrorJson(e)
+                }
+            }
+        }
+    }
+
     fun Route.initRoutes() {
         postConsultation()
         getConsultations()
+        getConsultationDetail()
     }
 }

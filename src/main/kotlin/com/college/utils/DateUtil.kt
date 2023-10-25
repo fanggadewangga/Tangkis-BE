@@ -29,5 +29,5 @@ infix fun String.gapBetween(date: String) = run {
 
 enum class DateFormat(val format: String) {
     DATE("dd MMMM yyyy"),
-    DATE_TIME("${DATE.format}'T'HH:mm"),
+    DATE_TIME("${DATE.format}, HH:mm"),
 }
