@@ -8,4 +8,5 @@ interface ContactRepository {
     suspend fun getContactsByNim(nim: String): List<ContactResponse> // clear
     suspend fun deleteContact(contactId: String) // clear
     suspend fun isContactLimitReached(userId: String): Boolean // clear
+    suspend fun isDuplicateContact(userId: String, number: String): Boolean // not clear
 }

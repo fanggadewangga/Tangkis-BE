@@ -4,6 +4,8 @@ import com.college.data.table.*
 import com.college.model.response.consultation.ConsultationDetailResponse
 import com.college.model.response.report.ReportResponse
 import com.college.model.request.user.User
+import com.college.model.response.article.ArticleListResponse
+import com.college.model.response.article.ArticleResponse
 import com.college.model.response.consultation.ConsultationListResponse
 import com.college.model.response.contact.ContactResponse
 import com.college.model.response.report.ReportDetailResponse
@@ -82,3 +84,18 @@ fun ResultRow.toConsultation(): ConsultationDetailResponse {
         updatedAt = this[ConsultationTable.updateDate]
     )
 }
+
+fun ResultRow.toArticles() = ArticleListResponse(
+    articleId = this[ArticleTable.articleId],
+    title = this[ArticleTable.title],
+    content = this[ArticleTable.content],
+    imageUrl = this[ArticleTable.imageUrl]
+)
+
+fun ResultRow.toArticleDetail() = ArticleResponse(
+    articleId = this[ArticleTable.articleId],
+    title = this[ArticleTable.title],
+    content = this[ArticleTable.content],
+    imageUrl = this[ArticleTable.imageUrl],
+    date = this[ArticleTable.postDate]
+)

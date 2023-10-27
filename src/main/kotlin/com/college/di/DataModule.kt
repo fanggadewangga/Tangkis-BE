@@ -1,6 +1,8 @@
 package com.college.di
 
 import com.college.data.database.DatabaseFactory
+import com.college.data.repository.article.ArticleRepository
+import com.college.data.repository.article.ArticleRepositoryImpl
 import com.college.data.repository.consultation.ConsultationRepository
 import com.college.data.repository.consultation.ConsultationRepositoryImpl
 import com.college.data.repository.consultation_time.ConsultationTimeRepository
@@ -69,5 +71,9 @@ val repositoryModule = module {
 
     single<ConsultationTimeRepository> {
         ConsultationTimeRepositoryImpl(get())
+    }
+
+    single<ArticleRepository> {
+        ArticleRepositoryImpl(get())
     }
 }

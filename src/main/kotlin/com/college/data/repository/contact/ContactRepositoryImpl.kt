@@ -6,11 +6,8 @@ import com.college.data.table.ContactTable
 import com.college.model.request.contact.ContactRequest
 import com.college.model.response.contact.ContactResponse
 import com.college.utils.toContact
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 
 class ContactRepositoryImpl(private val dbFactory: DatabaseFactory) : ContactRepository {
 
@@ -44,5 +41,13 @@ class ContactRepositoryImpl(private val dbFactory: DatabaseFactory) : ContactRep
         }
 
         return contactTotal >= 5
+    }
+
+    override suspend fun isDuplicateContact(userId: String, number: String): Boolean {
+        val contactFound = dbFactory.dbQuery {
+            ContactTable.select(ContactTable.uid.eq(userId).and(ContactTable.number.eq(number))).count()
+        }
+
+        return contactFound > 0
     }
 }

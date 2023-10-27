@@ -1,7 +1,6 @@
 package com.college.route
 
 import com.college.data.repository.contact.ContactRepository
-import com.college.middleware.Middleware
 import com.college.model.request.contact.ContactRequest
 import com.college.route.RouteResponseHelper.buildErrorJson
 import com.college.route.RouteResponseHelper.buildSuccessJson
@@ -25,9 +24,13 @@ class ContactRoute(private val repository: ContactRepository) {
 
                 val nim = call.parameters["nim"] ?: ""
                 val isLimitReached = repository.isContactLimitReached(nim)
+                val isDuplicateContact = repository.isDuplicateContact(nim, body.number)
 
                 if (isLimitReached) {
                     call.buildErrorJson(message = "Hanya dapat menambahkan 5 kontak darurat")
+                    return@post
+                } else if (isDuplicateContact) {
+                    call.buildErrorJson(message = "Kontak dengan nomor tersebut telah ditambahkan")
                     return@post
                 } else {
                     try {
