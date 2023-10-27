@@ -9,5 +9,7 @@ interface UserRepository {
     suspend fun insertUser(body: UserRegisterRequest, saltedHash: SaltedHash): User  //  clear
     suspend fun isIdentityNumberExist(nim: String): Boolean // clear
     suspend fun getUserByIdentityNumber(nim: String): User? // clear
-    suspend fun getUserDetail(userId: String): UserResponse // not clear
+    suspend fun getUserDetail(userId: String): UserResponse // clear
+    suspend fun updateUserWhatsapp(userId: String, newWhatsapp: String) // clear
+    suspend fun updateUserPassword(userId: String, saltedHash: SaltedHash) // clear
 }

@@ -3,12 +3,13 @@ package com.college.utils
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 fun createTimeStamp(format: DateFormat): String = run {
     val date = java.util.Date()
-    val formatter = SimpleDateFormat(format.format)
+    val formatter = SimpleDateFormat(format.format, Locale("id", "ID"))
     formatter.timeZone = java.util.TimeZone.getTimeZone("Asia/Jakarta")
     formatter.format(date)
 }
@@ -30,4 +31,6 @@ infix fun String.gapBetween(date: String) = run {
 enum class DateFormat(val format: String) {
     DATE("dd MMMM yyyy"),
     DATE_TIME("${DATE.format}, HH:mm"),
+    DAY_DATE("EEEE dd MMMM yyyy"),
+    DAY_DATE_TIME("${DAY_DATE.format}, HH:mm"),
 }

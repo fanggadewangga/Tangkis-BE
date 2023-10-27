@@ -10,6 +10,7 @@ import com.college.utils.toUser
 import com.college.utils.toUserResponse
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 
 class UserRepositoryImpl(
     private val dbFactory: DatabaseFactory
@@ -51,5 +52,22 @@ class UserRepositoryImpl(
             .firstNotNullOf {
                 it.toUserResponse()
             }
+    }
+
+    override suspend fun updateUserWhatsapp(userId: String, newWhatsapp: String) {
+        dbFactory.dbQuery {
+            UserTable.update(where = { UserTable.userId.eq(userId) }) {
+                it[whatsapp] = newWhatsapp
+            }
+        }
+    }
+
+    override suspend fun updateUserPassword(userId: String, saltedHash: SaltedHash) {
+        dbFactory.dbQuery {
+            UserTable.update(where = { UserTable.userId.eq(userId) }) {
+                it[password] = saltedHash.hash
+                it[salt] = saltedHash.salt
+            }
+        }
     }
 }

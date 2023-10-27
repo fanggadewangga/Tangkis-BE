@@ -20,7 +20,7 @@ class AuthRoute(
     private val middleware: Middleware
 ) {
     private fun Route.signUp() {
-        post("/signup") {
+        post("/register") {
             val body = call.receive<UserRegisterRequest>()
             val saltedHash = middleware.hashPassword(body.password)
             val isIdentityNumberExist = repository.isIdentityNumberExist(body.nim)
@@ -53,7 +53,7 @@ class AuthRoute(
     }
 
     private fun Route.signIn() {
-        post("/signin") {
+        post("/login") {
             val body = call.receive<UserLoginRequest>()
             val user = repository.getUserByIdentityNumber(body.nim)
 
@@ -77,7 +77,7 @@ class AuthRoute(
     }
 
     private fun Route.signOut() {
-        post("/signout") {
+        post("/logout") {
             val jwt = call.request.header("Authorization")?.substring("Bearer ".length)
             middleware.apply { application.invalidateToken(jwt ?: "") }
             call.buildSuccessJson { "Sign out success" }

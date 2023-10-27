@@ -9,4 +9,5 @@ val routeModule = module {
     factory { ReportRoute( get(), get() ) }
     factory { ConsultationRoute(get()) }
     factory { ConsultationTimeRoute(get()) }
+    factory { UserRoute(get(), get()) }
 }

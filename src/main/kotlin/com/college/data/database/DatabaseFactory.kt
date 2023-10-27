@@ -16,7 +16,7 @@ class DatabaseFactory(
         Database.connect(dataSource)
         transaction {
             val tables = listOf(
-                UserTable, ContactTable,ReportTable, ConsultationTable, ConsultationTimeTable
+                UserTable, ContactTable,ReportTable, ConsultationTable, ConsultationTimeTable, TokenBlacklistTable
             )
             tables.forEach { table ->
                 SchemaUtils.create(table)
