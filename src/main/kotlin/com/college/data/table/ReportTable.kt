@@ -10,7 +10,7 @@ object ReportTable : Table() {
     val story = varchar("story", 512)
     val isNeedConsultation = bool("is_need_consultation")
     val progressIndex = integer("progress_index")
-    val postDate = varchar("post_date]", 64)
+    val postDate = varchar("post_date", 64).nullable()
     val updateDate = varchar("update_date", 64)
     val consultationId = reference("consultation_id", ConsultationTable.consultationId).nullable()
 

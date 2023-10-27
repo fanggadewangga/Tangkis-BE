@@ -4,10 +4,10 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils
 import com.college.data.database.DatabaseFactory
 import com.college.data.table.ConsultationTable
 import com.college.data.table.ConsultationTimeTable
-import com.college.data.table.UserTable
 import com.college.model.request.consultation.ConsultationRequest
-import com.college.model.response.consultation.ConsultationResponse
-import com.college.utils.toConsultation
+import com.college.model.response.consultation.ConsultationDetailResponse
+import com.college.model.response.consultation.ConsultationListResponse
+import com.college.utils.*
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.select
 
 class ConsultationRepositoryImpl(private val dbFactory: DatabaseFactory) : ConsultationRepository {
     override suspend fun insertConsultation(nim: String, body: ConsultationRequest): String {
+        val timestamp = createTimeStamp(DateFormat.DATE)
         val idCreated = "CONSULTATION-${NanoIdUtils.randomNanoId()}"
         dbFactory.dbQuery {
             ConsultationTable.insert { table ->
@@ -23,14 +24,17 @@ class ConsultationRepositoryImpl(private val dbFactory: DatabaseFactory) : Consu
                 table[story] = body.story
                 table[counselorChoice] = body.counselorChoice
                 table[consultationType] = body.consultationType
+                table[progressIndex] = Progress.PROCESS.index
                 table[date] = body.date
                 table[time] = body.time
+                table[postDate] = timestamp
+                table[updateDate] = timestamp
             }
         }
         return idCreated
     }
 
-    override suspend fun getConsultationByNim(nim: String): List<ConsultationResponse> = dbFactory.dbQuery {
+    override suspend fun getConsultationByNim(nim: String): List<ConsultationListResponse> = dbFactory.dbQuery {
         ConsultationTable
             .join(
                 ConsultationTimeTable,
@@ -44,13 +48,14 @@ class ConsultationRepositoryImpl(private val dbFactory: DatabaseFactory) : Consu
                 ConsultationTable.consultationType,
                 ConsultationTable.date,
                 ConsultationTable.time,
+                ConsultationTable.updateDate,
                 ConsultationTimeTable.startTime,
                 ConsultationTimeTable.endTime
             )
-            .select { ConsultationTable.uid.eq(nim) }.mapNotNull { it.toConsultation() }
+            .select { ConsultationTable.uid.eq(nim) }.mapNotNull { it.toConsultationList() }
     }
 
-    override suspend fun getConsultationDetail(nim: String, consultationId: String): ConsultationResponse =
+    override suspend fun getConsultationDetail(nim: String, consultationId: String): ConsultationDetailResponse =
         dbFactory.dbQuery {
             ConsultationTable
                 .join(
@@ -65,6 +70,9 @@ class ConsultationRepositoryImpl(private val dbFactory: DatabaseFactory) : Consu
                     ConsultationTable.consultationType,
                     ConsultationTable.date,
                     ConsultationTable.time,
+                    ConsultationTable.progressIndex,
+                    ConsultationTable.postDate,
+                    ConsultationTable.updateDate,
                     ConsultationTimeTable.startTime,
                     ConsultationTimeTable.endTime
                 )

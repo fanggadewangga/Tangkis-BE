@@ -17,14 +17,14 @@ import org.jetbrains.exposed.sql.update
 class ReportRepositoryImpl(private val dbFactory: DatabaseFactory) : ReportRepository {
     override suspend fun insertReport(nim: String, body: ReportRequest, consultationId: String?) {
         dbFactory.dbQuery {
-            val date = createTimeStamp(DateFormat.DATE_TIME)
+            val date = createTimeStamp(DateFormat.DATE)
             val idCreated = "REPORT-${NanoIdUtils.randomNanoId()}"
             ReportTable.insert { table ->
                 table[reportId] = idCreated
                 table[uid] = nim
                 table[story] = body.story
                 table[isNeedConsultation] = body.isNeedConsultation
-                table[progressIndex] = ReportProgress.PROCESS.index
+                table[progressIndex] = Progress.PROCESS.index
                 table[postDate] = date
                 table[updateDate] = date
                 table[this.consultationId] = consultationId
