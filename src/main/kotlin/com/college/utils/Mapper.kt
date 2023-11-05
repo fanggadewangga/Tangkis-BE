@@ -9,6 +9,7 @@ import com.college.model.response.article.ArticleResponse
 import com.college.model.response.consultation.ConsultationListResponse
 import com.college.model.response.contact.ContactResponse
 import com.college.model.response.report.ReportDetailResponse
+import com.college.model.response.user.RPLUserResponse
 import com.college.model.response.user.UserResponse
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -29,6 +30,13 @@ fun ResultRow.toUserResponse() = UserResponse(
     password = this[UserTable.password],
     salt = this[UserTable.salt]
 )
+
+fun ResultRow.toRPLUserResponse() = RPLUserResponse(
+    nim = this[UserTable.userId],
+    name = this[UserTable.name],
+    password = this[UserTable.password],
+)
+
 
 fun ResultRow.toContact() = ContactResponse(
     contactId = this[ContactTable.contactId],

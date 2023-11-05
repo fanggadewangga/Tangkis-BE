@@ -29,6 +29,20 @@ class UserRoute(
         }
     }
 
+    private fun Route.getRPLUserDetail() {
+        authenticate {
+            get("/rpl/user/{nim}") {
+                val nim = call.parameters["nim"] ?: ""
+                try {
+                    val user = userRepository.getRPLUserDetail(nim)
+                    call.buildSuccessJson { user }
+                } catch (e: Exception) {
+                    call.buildErrorJson(e)
+                }
+            }
+        }
+    }
+
     private fun Route.updateUserWhatsapp() {
         authenticate {
             put("/user/{nim}/whatsapp") {
@@ -77,6 +91,7 @@ class UserRoute(
 
     fun Route.initRoute() {
         getUserDetail()
+        getRPLUserDetail()
         updateUserWhatsapp()
         updateUserPassword()
     }

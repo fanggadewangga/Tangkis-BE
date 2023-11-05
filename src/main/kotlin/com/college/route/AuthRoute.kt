@@ -3,6 +3,7 @@ package com.college.route
 import com.college.data.repository.user.UserRepository
 import com.college.middleware.Middleware
 import com.college.model.request.user.UserLoginRequest
+import com.college.model.request.user.UserRPLRegisterRequest
 import com.college.model.request.user.UserRegisterRequest
 import com.college.model.response.token.TokenResponse
 import com.college.route.RouteResponseHelper.buildErrorJson
@@ -52,6 +53,39 @@ class AuthRoute(
         }
     }
 
+    private fun Route.signUpRPL() {
+        post("/rpl/register") {
+            val body = call.receive<UserRPLRegisterRequest>()
+            val saltedHash = middleware.hashPassword(body.password)
+            val isIdentityNumberExist = repository.isIdentityNumberExist(body.nim)
+            val areFieldsBlank = body.name.isBlank() || body.password.isBlank() || body.nim.isBlank()
+            val isPasswordTooSort = body.password.length < 8
+            val isFilkomStudent = Regex("""^\d{2}515\d*$""").matches(body.nim)
+
+            if (isIdentityNumberExist) {
+                call.buildErrorJson(message = "NIM telah terdaftar", httpStatusCode = HttpStatusCode.Conflict)
+                return@post
+            } else if (areFieldsBlank || isPasswordTooSort) {
+                call.buildErrorJson(
+                    message = "invalid email or password must be longer than 6 characters",
+                    httpStatusCode = HttpStatusCode.BadRequest
+                )
+                return@post
+            } else if (!isFilkomStudent) {
+                call.buildErrorJson(
+                    message = "NIM tidak terdaftar sebagai mahasiswa FILKOM!",
+                    httpStatusCode = HttpStatusCode.Conflict
+                )
+                return@post
+            }
+
+            val user = repository.insertRPLUser(body, saltedHash)
+            val token = middleware.generateToken(TokenClaim(Constant.TOKEN_KEY_CLAIM, user.nim))
+
+            call.buildSuccessJson { TokenResponse(token) }
+        }
+    }
+
     private fun Route.signIn() {
         post("/login") {
             val body = call.receive<UserLoginRequest>()
@@ -86,6 +120,7 @@ class AuthRoute(
 
     fun Route.initRoutes() {
         signUp()
+        signUpRPL()
         signIn()
         signOut()
     }
