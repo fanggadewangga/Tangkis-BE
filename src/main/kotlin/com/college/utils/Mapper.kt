@@ -88,7 +88,7 @@ fun ResultRow.toConsultation(): ConsultationDetailResponse {
         progress = if (this[ConsultationTable.progressIndex] == Progress.PROCESS.index) Progress.PROCESS.message else Progress.DONE.message,
         counselorChoice = counselorChoice,
         consultationType = consultationType,
-        date = this[ConsultationTable.date],
+        date = this[ConsultationTable.date].convertDateFormat(DateFormat.DATE, DateFormat.DAY_DATE),
         time = "${this[ConsultationTimeTable.startTime]} - ${this[ConsultationTimeTable.endTime]}",
         createdAt = this[ConsultationTable.postDate],
         updatedAt = this[ConsultationTable.updateDate]

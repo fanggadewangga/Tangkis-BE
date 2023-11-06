@@ -70,7 +70,7 @@ class ReportRepositoryImpl(private val dbFactory: DatabaseFactory) : ReportRepos
 
     override suspend fun updateReportProgress(reportId: String) {
         dbFactory.dbQuery {
-            val date = createTimeStamp(DateFormat.DATE)
+            val date = createTimeStamp(DateFormat.DATE_TIME)
             val currentIndex = ReportTable.select { ReportTable.reportId.eq(reportId) }
                 .firstNotNullOf { it[ReportTable.progressIndex] }
 
