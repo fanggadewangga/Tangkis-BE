@@ -6,6 +6,7 @@ import com.college.model.request.user.UserPasswordRequest
 import com.college.model.request.user.UserWhatsappRequest
 import com.college.route.RouteResponseHelper.buildErrorJson
 import com.college.route.RouteResponseHelper.buildSuccessJson
+import com.college.security.hashing.SaltedHash
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
@@ -75,12 +76,28 @@ class UserRoute(
                     call.buildErrorJson(e)
                     return@put
                 }
-                val isPasswordTooSort = body.password.length < 8
+                val isPasswordTooSort = body.newPassword.length < 8
+
+                val user = userRepository.getUserByIdentityNumber(nim)
+
+                if (user == null) {
+                    call.buildErrorJson(message = "user not found")
+                    return@put
+                }
+
+                middleware.apply {
+                    call.verifyPassword(
+                        body.oldPassword, SaltedHash(
+                            hash = user.password,
+                            salt = user.salt
+                        )
+                    )
+                }
 
                 if (isPasswordTooSort) {
                     call.buildErrorJson(message = "Password harus lebih dari 8 karakter")
                 } else {
-                    val saltedHash = middleware.hashPassword(body.password)
+                    val saltedHash = middleware.hashPassword(body.newPassword)
                     userRepository.updateUserPassword(nim, saltedHash)
                     middleware.apply { application.invalidateToken(jwt ?: "") }
                     call.buildSuccessJson { "Sukses mengubah password" }

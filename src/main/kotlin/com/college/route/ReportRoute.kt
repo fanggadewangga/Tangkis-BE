@@ -3,6 +3,7 @@ package com.college.route
 import com.college.data.repository.consultation.ConsultationRepository
 import com.college.data.repository.report.ReportRepository
 import com.college.model.request.report.ReportRequest
+import com.college.model.response.report.AddReportResponse
 import com.college.route.RouteResponseHelper.buildErrorJson
 import com.college.route.RouteResponseHelper.buildSuccessJson
 import com.college.route.RouteResponseHelper.buildSuccessListJson
@@ -29,13 +30,19 @@ class ReportRoute(
                 }
 
                 try {
-                    if (!body.isNeedConsultation && body.consultation == null) {
-                        reportRepository.insertReport(nim = nim, body = body)
-                    } else {
-                        val uid = consultationRepository.insertConsultation(nim = nim, body = body.consultation!!)
-                        reportRepository.insertReport(nim = nim, body = body, consultationId = uid)
-                    }
-                    call.buildSuccessJson { "Sukses mengirim laporan" }
+                    val addReportResponse: AddReportResponse =
+                        if (!body.isNeedConsultation && body.consultation == null) {
+                            reportRepository.insertReport(nim = nim, body = body)
+                        } else {
+                            val consultationResponse =
+                                consultationRepository.insertConsultation(nim = nim, body = body.consultation!!)
+                            reportRepository.insertReport(
+                                nim = nim,
+                                body = body,
+                                consultationId = consultationResponse.consultationId
+                            )
+                        }
+                    call.buildSuccessJson { addReportResponse }
                 } catch (e: Exception) {
                     call.buildErrorJson(e)
                 }

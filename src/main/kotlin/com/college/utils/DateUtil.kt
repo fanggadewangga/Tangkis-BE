@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 fun createTimeStamp(format: DateFormat): String = run {
-    val date = java.util.Date()
+    val date = Date()
     val formatter = SimpleDateFormat(format.format, Locale("id", "ID"))
-    formatter.timeZone = java.util.TimeZone.getTimeZone("Asia/Jakarta")
+    formatter.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
     formatter.format(date)
 }
 
@@ -26,6 +26,13 @@ infix fun String.gapBetween(date: String) = run {
 
     val diffInMillis = abs(date2.time - date1.time)
     TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS)
+}
+fun String.convertDateFormat(fromFormat: DateFormat, toFormat: DateFormat): String {
+    val originalFormatter = SimpleDateFormat(fromFormat.format, Locale("id", "ID"))
+    val targetFormatter = SimpleDateFormat(toFormat.format, Locale("id", "ID"))
+
+    val date = originalFormatter.parse(this)
+    return targetFormatter.format(date)
 }
 
 enum class DateFormat(val format: String) {

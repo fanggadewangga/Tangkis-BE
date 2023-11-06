@@ -15,6 +15,7 @@ fun Application.configureRouting() {
     val consultationTimeRoute by inject<ConsultationTimeRoute>()
     val userRoute by inject<UserRoute>()
     val articleRoute by inject<ArticleRoute>()
+    val activityRoute by inject<ActivityRoute>()
 
     routing {
         get("/") {
@@ -27,5 +28,6 @@ fun Application.configureRouting() {
         consultationTimeRoute.apply { initRoutes() }
         userRoute.apply { initRoute() }
         articleRoute.apply { initRoute() }
+        activityRoute.apply { initRoute() }
     }
 }

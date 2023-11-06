@@ -24,8 +24,8 @@ class ConsultationRoute(
                 }
 
                 try {
-                    consultationRepository.insertConsultation(nim = nim, body = body)
-                    call.buildSuccessJson { "Berhasil booking konsultasi" }
+                    val addConsultationResponse =  consultationRepository.insertConsultation(nim = nim, body = body)
+                    call.buildSuccessJson { addConsultationResponse }
                 } catch (e: Exception) {
                     call.buildErrorJson(e)
                 }
