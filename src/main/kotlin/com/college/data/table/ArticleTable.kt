@@ -7,9 +7,9 @@ object ArticleTable: Table() {
         get() = "article"
 
     val articleId = varchar("article_id", 128)
-    val title = varchar("title", 128)
-    val content = varchar("content", 1024)
-    val imageUrl = varchar("image_url", 1024)
+    val title = varchar("title", 512)
+    val content = varchar("content", 3072)
+    val imageUrl = varchar("image_url", 2048)
     val postDate = varchar("post_date", 64)
 
     override val primaryKey: PrimaryKey
