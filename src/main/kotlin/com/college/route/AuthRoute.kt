@@ -92,7 +92,7 @@ class AuthRoute(
             val user = repository.getUserByIdentityNumber(body.nim)
 
             if (user == null) {
-                call.buildErrorJson(message = "user not found")
+                call.buildErrorJson(message = "NIM tidak terdaftar!")
                 return@post
             }
 

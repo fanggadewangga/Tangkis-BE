@@ -25,7 +25,7 @@ class Middleware(
     suspend fun ApplicationCall.verifyPassword(password: String, salt: SaltedHash) {
         val isPasswordValid = hashingService.verify(password, salt)
         if (!isPasswordValid) {
-            buildErrorJson(message = "Invalid password")
+            buildErrorJson(message = "Password salah!")
         }
     }
 
